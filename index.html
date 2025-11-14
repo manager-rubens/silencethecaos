@@ -4,330 +4,437 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pay to Silence the Chaos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              sand: "#f5eedc",
-              coral: "#ff8579",
-              mint: "#a0d9b4",
-            },
-          },
-        },
-      };
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+        background-color: #f4f0e6;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Musical notes decoration */
+      .musical-note {
+        position: absolute;
+        font-size: 48px;
+        color: #222222;
+        opacity: 0.9;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .musical-note--1 {
+        top: 15%;
+        left: 15%;
+        animation-delay: 0s;
+      }
+
+      .musical-note--2 {
+        top: 20%;
+        right: 12%;
+        animation-delay: 0.5s;
+      }
+
+      .musical-note--3 {
+        bottom: 25%;
+        left: 10%;
+        animation-delay: 1s;
+      }
+
+      .musical-note--4 {
+        bottom: 30%;
+        right: 15%;
+        animation-delay: 1.5s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(-5deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(5deg);
+        }
+      }
+
+      /* Sound wave decoration */
+      .sound-wave {
+        position: absolute;
+        width: 300px;
+        height: 80px;
+        opacity: 0.7;
+      }
+
+      .sound-wave--left {
+        left: 5%;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .sound-wave--right {
+        right: 5%;
+        top: 50%;
+        transform: translateY(-50%) scaleX(-1);
+      }
+
+      .wave-line {
+        position: absolute;
+        height: 2px;
+        background-color: #eb8c8c;
+        border-radius: 2px;
+      }
+
+      .wave-bars {
+        position: absolute;
+        display: flex;
+        gap: 3px;
+        bottom: 0;
+      }
+
+      .wave-bar {
+        width: 2px;
+        background-color: #222222;
+        opacity: 0.6;
+      }
+
+      /* Main popup container */
+      .popup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 10;
+        max-width: 500px;
+        width: 90%;
+      }
+
+      .popup__illustration {
+        width: 280px;
+        height: auto;
+        margin-bottom: -40px;
+        z-index: 2;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+      }
+
+      .popup__card {
+        background-color: #ffffff;
+        border: 4px solid #598888;
+        border-radius: 32px;
+        padding: 80px 50px 50px;
+        text-align: center;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        position: relative;
+      }
+
+      .popup__header {
+        font-size: 36px;
+        font-weight: 800;
+        color: #222222;
+        margin-bottom: 32px;
+        line-height: 1.2;
+      }
+
+      .popup__button {
+        width: 100%;
+        background-color: #ee8473;
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 20px 40px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        margin-bottom: 24px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(238, 132, 115, 0.3);
+      }
+
+      .popup__button:hover {
+        background-color: #e67565;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(238, 132, 115, 0.4);
+      }
+
+      .popup__button:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      .popup__disclaimer {
+        font-size: 14px;
+        color: #222222;
+        line-height: 1.4;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 600px) {
+        .popup__illustration {
+          width: 220px;
+        }
+
+        .popup__card {
+          padding: 70px 30px 40px;
+          border-radius: 24px;
+        }
+
+        .popup__header {
+          font-size: 28px;
+        }
+
+        .popup__button {
+          font-size: 18px;
+          padding: 18px 32px;
+        }
+
+        .musical-note {
+          font-size: 36px;
+        }
+
+        .sound-wave {
+          width: 200px;
+        }
+      }
+    </style>
   </head>
-  <body
-    class="bg-sand min-h-screen flex items-center justify-center p-4 transition-colors duration-500"
-    id="pageBody"
-  >
-    <!-- Main Container -->
-    <div
-      class="relative w-full max-w-md aspect-square flex flex-col items-center justify-center"
-    >
-      <!-- SVG Illustration with Sound Waves and Musical Notes -->
-      <div class="relative w-full flex items-center justify-center mb-8">
-        <svg
-          viewBox="0 0 400 250"
-          class="w-full h-auto"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <!-- Sound Wave Background -->
-          <g id="soundwaves">
-            <!-- Coral/Orange Waves -->
-            <path
-              d="M 50 150 Q 100 120, 150 150 T 250 150 T 350 150"
-              stroke="#ff8579"
-              stroke-width="15"
-              fill="none"
-              opacity="0.6"
-            />
-            <path
-              d="M 40 170 Q 90 145, 140 170 T 240 170 T 340 170"
-              stroke="#ff8579"
-              stroke-width="12"
-              fill="none"
-              opacity="0.5"
-            />
-            <path
-              d="M 60 190 Q 110 165, 160 190 T 260 190 T 360 190"
-              stroke="#ff8579"
-              stroke-width="10"
-              fill="none"
-              opacity="0.4"
-            />
+  <body>
+    <!-- Musical notes decoration -->
+    <div class="musical-note musical-note--1">♪</div>
+    <div class="musical-note musical-note--2">♫</div>
+    <div class="musical-note musical-note--3">♪</div>
+    <div class="musical-note musical-note--4">♫</div>
 
-            <!-- Black Vertical Lines (Sound Bars) -->
-            <rect x="80" y="155" width="2" height="15" fill="#000" />
-            <rect x="85" y="150" width="2" height="20" fill="#000" />
-            <rect x="90" y="145" width="2" height="25" fill="#000" />
-            <rect x="95" y="148" width="2" height="22" fill="#000" />
-            <rect x="100" y="152" width="2" height="18" fill="#000" />
-            <rect x="105" y="155" width="2" height="15" fill="#000" />
-            <rect x="110" y="150" width="2" height="20" fill="#000" />
-
-            <rect x="280" y="155" width="2" height="15" fill="#000" />
-            <rect x="285" y="150" width="2" height="20" fill="#000" />
-            <rect x="290" y="145" width="2" height="25" fill="#000" />
-            <rect x="295" y="148" width="2" height="22" fill="#000" />
-            <rect x="300" y="152" width="2" height="18" fill="#000" />
-            <rect x="305" y="155" width="2" height="15" fill="#000" />
-            <rect x="310" y="150" width="2" height="20" fill="#000" />
-          </g>
-
-          <!-- Musical Notes -->
-          <g id="notes">
-            <ellipse
-              cx="70"
-              cy="80"
-              rx="8"
-              ry="6"
-              fill="#000"
-              transform="rotate(-20 70 80)"
-            />
-            <rect x="76" y="50" width="3" height="30" fill="#000" />
-
-            <ellipse
-              cx="340"
-              cy="100"
-              rx="8"
-              ry="6"
-              fill="#000"
-              transform="rotate(15 340 100)"
-            />
-            <rect x="346" y="70" width="3" height="30" fill="#000" />
-          </g>
-
-          <!-- Panicked Man Character -->
-          <g id="character" transform="translate(200, 100)">
-            <!-- Body -->
-            <ellipse cx="0" cy="40" rx="35" ry="25" fill="#7fb0a0" />
-
-            <!-- Head -->
-            <ellipse cx="0" cy="0" rx="45" ry="50" fill="#f5d5c8" />
-
-            <!-- Hair -->
-            <path
-              d="M -30 -25 Q -35 -35, -28 -40 Q -20 -42, -15 -38 Q -10 -43, -5 -42 Q 0 -45, 5 -42 Q 10 -43, 15 -38 Q 20 -42, 28 -40 Q 35 -35, 30 -25"
-              fill="#6b5f58"
-            />
-
-            <!-- Left Ear (with motion lines) -->
-            <ellipse cx="-48" cy="0" rx="12" ry="18" fill="#f5d5c8" />
-            <path
-              d="M -60 -5 Q -65 0, -60 5"
-              stroke="#000"
-              stroke-width="2"
-              fill="none"
-            />
-            <path
-              d="M -63 -8 Q -68 0, -63 8"
-              stroke="#000"
-              stroke-width="2"
-              fill="none"
-            />
-            <path
-              d="M -66 -10 Q -71 0, -66 10"
-              stroke="#000"
-              stroke-width="2"
-              fill="none"
-            />
-
-            <!-- Right Ear (with motion lines) -->
-            <ellipse cx="48" cy="0" rx="12" ry="18" fill="#f5d5c8" />
-            <path
-              d="M 60 -5 Q 65 0, 60 5"
-              stroke="#000"
-              stroke-width="2"
-              fill="none"
-            />
-            <path
-              d="M 63 -8 Q 68 0, 63 8"
-              stroke="#000"
-              stroke-width="2"
-              fill="none"
-            />
-            <path
-              d="M 66 -10 Q 71 0, 66 10"
-              stroke="#000"
-              stroke-width="2"
-              fill="none"
-            />
-
-            <!-- Eyebrows (stressed) -->
-            <path
-              d="M -25 -15 Q -20 -20, -10 -18"
-              stroke="#000"
-              stroke-width="3"
-              fill="none"
-              stroke-linecap="round"
-            />
-            <path
-              d="M 25 -15 Q 20 -20, 10 -18"
-              stroke="#000"
-              stroke-width="3"
-              fill="none"
-              stroke-linecap="round"
-            />
-
-            <!-- Forehead stress lines -->
-            <path
-              d="M -15 -10 Q -10 -12, -5 -10"
-              stroke="#e8bfb3"
-              stroke-width="1.5"
-              fill="none"
-            />
-            <path
-              d="M 5 -10 Q 10 -12, 15 -10"
-              stroke="#e8bfb3"
-              stroke-width="1.5"
-              fill="none"
-            />
-
-            <!-- Eyes (wide open, stressed) -->
-            <ellipse
-              cx="-18"
-              cy="-2"
-              rx="13"
-              ry="16"
-              fill="#fff"
-              stroke="#000"
-              stroke-width="2"
-            />
-            <ellipse
-              cx="18"
-              cy="-2"
-              rx="13"
-              ry="16"
-              fill="#fff"
-              stroke="#000"
-              stroke-width="2"
-            />
-
-            <!-- Pupils (looking slightly inward) -->
-            <ellipse cx="-15" cy="0" rx="6" ry="8" fill="#000" />
-            <ellipse cx="15" cy="0" rx="6" ry="8" fill="#000" />
-
-            <!-- Nose -->
-            <ellipse cx="0" cy="8" rx="6" ry="8" fill="#ff9b8f" />
-
-            <!-- Mouth (screaming) -->
-            <ellipse cx="0" cy="22" rx="15" ry="18" fill="#000" />
-
-            <!-- Teeth -->
-            <rect x="-12" y="15" width="8" height="8" fill="#fff" rx="1" />
-            <rect x="-3" y="15" width="8" height="8" fill="#fff" rx="1" />
-            <rect x="6" y="15" width="6" height="8" fill="#fff" rx="1" />
-
-            <!-- Blush marks -->
-            <ellipse
-              cx="-32"
-              cy="10"
-              rx="6"
-              ry="4"
-              fill="#ffb8b0"
-              opacity="0.6"
-            />
-            <ellipse
-              cx="32"
-              cy="10"
-              rx="6"
-              ry="4"
-              fill="#ffb8b0"
-              opacity="0.6"
-            />
-
-            <!-- Arms up (stressed position) -->
-            <ellipse
-              cx="-40"
-              cy="15"
-              rx="10"
-              ry="28"
-              fill="#f5d5c8"
-              transform="rotate(-20 -40 15)"
-            />
-            <ellipse
-              cx="40"
-              cy="15"
-              rx="10"
-              ry="28"
-              fill="#f5d5c8"
-              transform="rotate(20 40 15)"
-            />
-
-            <!-- Hands -->
-            <ellipse cx="-45" cy="-5" rx="8" ry="10" fill="#f5d5c8" />
-            <ellipse cx="45" cy="-5" rx="8" ry="10" fill="#f5d5c8" />
-          </g>
-        </svg>
-      </div>
-
-      <!-- Card Component -->
-      <div
-        class="bg-white rounded-3xl border-4 border-mint p-8 w-full max-w-sm shadow-lg"
+    <!-- Sound waves decoration -->
+    <div class="sound-wave sound-wave--left">
+      <svg
+        width="300"
+        height="80"
+        viewBox="0 0 300 80"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <!-- Title -->
-        <h1
-          class="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-6"
-        >
-          Pay to silence<br />the chaos!
-        </h1>
+        <path
+          d="M0 40 Q 50 20, 100 40 T 200 40 T 300 40"
+          stroke="#EB8C8C"
+          stroke-width="3"
+          fill="none"
+          opacity="0.6"
+        />
+        <path
+          d="M0 45 Q 50 30, 100 45 T 200 45 T 300 45"
+          stroke="#EB8C8C"
+          stroke-width="2"
+          fill="none"
+          opacity="0.4"
+        />
+        <rect x="50" y="55" width="2" height="8" fill="#222222" opacity="0.5" />
+        <rect
+          x="55"
+          y="50"
+          width="2"
+          height="15"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="60"
+          y="45"
+          width="2"
+          height="20"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="65"
+          y="52"
+          width="2"
+          height="12"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="70"
+          y="48"
+          width="2"
+          height="18"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="75"
+          y="54"
+          width="2"
+          height="10"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="150"
+          y="55"
+          width="2"
+          height="8"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="155"
+          y="50"
+          width="2"
+          height="15"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="160"
+          y="45"
+          width="2"
+          height="20"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="165"
+          y="52"
+          width="2"
+          height="12"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="170"
+          y="48"
+          width="2"
+          height="18"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="175"
+          y="54"
+          width="2"
+          height="10"
+          fill="#222000"
+          opacity="0.5"
+        />
+      </svg>
+    </div>
+    <div class="sound-wave sound-wave--right">
+      <svg
+        width="300"
+        height="80"
+        viewBox="0 0 300 80"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M0 40 Q 50 20, 100 40 T 200 40 T 300 40"
+          stroke="#EB8C8C"
+          stroke-width="3"
+          fill="none"
+          opacity="0.6"
+        />
+        <path
+          d="M0 45 Q 50 30, 100 45 T 200 45 T 300 45"
+          stroke="#EB8C8C"
+          stroke-width="2"
+          fill="none"
+          opacity="0.4"
+        />
+        <rect x="50" y="55" width="2" height="8" fill="#222222" opacity="0.5" />
+        <rect
+          x="55"
+          y="50"
+          width="2"
+          height="15"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="60"
+          y="45"
+          width="2"
+          height="20"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="65"
+          y="52"
+          width="2"
+          height="12"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="70"
+          y="48"
+          width="2"
+          height="18"
+          fill="#222222"
+          opacity="0.5"
+        />
+        <rect
+          x="75"
+          y="54"
+          width="2"
+          height="10"
+          fill="#222222"
+          opacity="0.5"
+        />
+      </svg>
+    </div>
 
-        <!-- Button -->
-        <button
-          id="silenceBtn"
-          class="w-full bg-coral text-white font-bold text-lg py-4 rounded-full hover:bg-opacity-90 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 mb-6"
-        >
-          SILENCE NOW
-        </button>
-
-        <!-- Subtext -->
-        <p
-          id="subtext"
-          class="text-center text-gray-700 text-sm leading-relaxed"
-        >
+    <!-- Main popup -->
+    <div class="popup">
+      <img
+        src="noisy-popup-character.png"
+        alt="Distressed character covering ears"
+        class="popup__illustration"
+      />
+      <div class="popup__card">
+        <h1 class="popup__header">Pay to silence<br />the chaos!</h1>
+        <button class="popup__button" id="silenceBtn">Silence Now</button>
+        <p class="popup__disclaimer">
           Every time you pay, we get greedier!<br />Price goes up!
         </p>
       </div>
     </div>
 
-    <!-- JavaScript -->
     <script>
+      // Minimal JavaScript for button interaction
       const silenceBtn = document.getElementById("silenceBtn");
-      const subtext = document.getElementById("subtext");
-      const pageBody = document.getElementById("pageBody");
-
-      let currentPrice = 20;
-      let clickCount = 0;
 
       silenceBtn.addEventListener("click", function () {
-        clickCount++;
+        console.log("SILENCE NOW button clicked! 🔇");
 
-        // Darken the background
-        pageBody.classList.remove("bg-sand");
-        pageBody.classList.add("bg-gray-800");
+        // Optional: Show a humorous alert
+        alert("Nice try! But the chaos only grows stronger... 💸");
 
-        // Change the subtext
-        subtext.innerHTML = `Chaos silenced. But the price for the next time is now <span class="font-bold text-coral">$${currentPrice}!</span>`;
-
-        // Update button text
-        silenceBtn.textContent = "SILENCED ✓";
-        silenceBtn.classList.add("bg-green-500");
-        silenceBtn.classList.remove("bg-coral");
-
-        // Increase price for next time
-        currentPrice += 15;
-
-        // Reset after 2 seconds
+        // Optional: Make the button text change
+        this.textContent = "PRICE INCREASED!";
         setTimeout(() => {
-          pageBody.classList.remove("bg-gray-800");
-          pageBody.classList.add("bg-sand");
-          silenceBtn.textContent = "SILENCE AGAIN?";
-          silenceBtn.classList.remove("bg-green-500");
-          silenceBtn.classList.add("bg-coral");
+          this.textContent = "SILENCE NOW";
         }, 2000);
+      });
+
+      // Add subtle animation to musical notes
+      document.querySelectorAll(".musical-note").forEach((note, index) => {
+        note.style.animationDelay = `${index * 0.3}s`;
       });
     </script>
   </body>
